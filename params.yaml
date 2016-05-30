@@ -1,0 +1,11 @@
+---
+services:
+  -
+    name: detect_faces
+    type: ros
+    port: 9090
+  -
+    name: detect_dominant_face
+    type: ros
+    port: 9090
+...
