@@ -22,7 +22,7 @@ limitations under the License.
 
 #include <rapp_face_detection/FaceDetectionRosSrv.h>
 
-#include <face_detection/face_detector.h>
+#include <rapp_face_detection/face_detector.h>
 
 /**
  * @class FaceDetection
@@ -47,6 +47,16 @@ class FaceDetection
       rapp_face_detection::FaceDetectionRosSrv::Request& req,
       rapp_face_detection::FaceDetectionRosSrv::Response& res
       );
+    /**
+     * @brief Serves the dominant face detection ROS service callback
+     * @param req [rapp_face_detection::FaceDetectionRosSrv::Request&] The ROS service request
+     * @param res [rapp_face_detection::FaceDetectionRosSrv::Response&] The ROS service response
+     * @return bool - The success status of the call
+     */
+    bool dominantFaceDetectionCallback(
+      rapp_face_detection::FaceDetectionRosSrv::Request& req,
+      rapp_face_detection::FaceDetectionRosSrv::Response& res
+      );
 
   private:
     /**< The ROS node handle */
@@ -55,8 +65,14 @@ class FaceDetection
     /**< The face detection service server */
     ros::ServiceServer faceDetectionService_;
 
+    /**< The dominant face detection service server */
+    ros::ServiceServer dominantFaceDetectionService_;
+
     /**< Member variable holding the face detection ROS service topic */
     std::string faceDetectionTopic_;
+
+    /**< Member variable holding the dominant face detection ROS service topic */
+    std::string dominantFaceDetectionTopic_;
 
     /**< Object of type FaceDetector */
     FaceDetector face_detector_;

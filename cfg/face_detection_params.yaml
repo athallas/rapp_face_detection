@@ -1,4 +1,5 @@
-rapp_face_detection_detect_faces_topic: /rapp/rapp_face_detection/detect_faces
+rapp_face_detection_detect_faces_topic: detect_faces
+rapp_face_detection_detect_dominant_face_topic: detect_dominant_face
 
 # This variable holds the maximum simultaneous calls the node can serve
 rapp_face_detection_threads: 10

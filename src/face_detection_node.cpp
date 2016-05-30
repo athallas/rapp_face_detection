@@ -15,7 +15,7 @@ limitations under the License.
 
 ******************************************************************************/
 
-#include <face_detection/face_detection.h>
+#include <rapp_face_detection/face_detection.h>
 
 /**
  * @brief The executable's main function.

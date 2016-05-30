@@ -15,7 +15,7 @@ limitations under the License.
 
 ******************************************************************************/
 
-#include <face_detection/face_detection.h>
+#include <rapp_face_detection/face_detection.h>
 
 
 /**
@@ -28,9 +28,18 @@ FaceDetection::FaceDetection(void)
   {
     ROS_ERROR("Face detection topic param does not exist");
   }
+  if(!nh_.getParam("/rapp_face_detection_detect_dominant_face_topic", 
+      dominantFaceDetectionTopic_))
+  {
+    ROS_ERROR("Dominant face detection topic param does not exist");
+  }
+
   // Creating the service server concerning the face detection functionality
   faceDetectionService_ = nh_.advertiseService(faceDetectionTopic_,
     &FaceDetection::faceDetectionCallback, this);
+  dominantFaceDetectionService_ = nh_.advertiseService(dominantFaceDetectionTopic_,
+    &FaceDetection::dominantFaceDetectionCallback, this);
+
 }
 
 /**
@@ -82,6 +91,59 @@ bool FaceDetection::faceDetectionCallback(
     res.faces_up_left.push_back(up_left_corner);
     res.faces_down_right.push_back(down_right_corner);
   }
+
+  return true;
+}
+
+/**
+ * @brief Serves the dominant face detection ROS service callback
+ * @param req [rapp_face_detection::FaceDetectionRosSrv::Request&] The ROS service request
+ * @param res [rapp_face_detection::FaceDetectionRosSrv::Response&] The ROS service response
+ * @return bool - The success status of the call
+ */
+bool FaceDetection::dominantFaceDetectionCallback(
+  rapp_face_detection::FaceDetectionRosSrv::Request& req,
+  rapp_face_detection::FaceDetectionRosSrv::Response& res)
+{
+  std::vector<unsigned int [4]> history;
+  std::vector<cv::Rect> faces = face_detector_.findFaces(req.imageFilename,
+    req.fast);
+
+  int dominant = -1;
+  float dominant_area = -1;
+
+  // Find the dominant face
+  for(unsigned int i = 0 ; i < faces.size() ; i++)
+  {
+    float tmp = faces[i].width * faces[i].height;
+    if(tmp > dominant_area)
+    {
+      dominant_area = tmp;
+      dominant = i;
+    }
+  }
+
+  if(dominant == -1)
+  {
+    return true;
+  }
+
+  unsigned int temp[4];
+  temp[0] = faces[dominant].x;
+  temp[1] = faces[dominant].y;
+  temp[2] = faces[dominant].x + faces[dominant].width;
+  temp[3] = faces[dominant].y + faces[dominant].height;
+
+  geometry_msgs::PointStamped up_left_corner;
+  geometry_msgs::PointStamped down_right_corner;
+
+  up_left_corner.point.x = temp[0];
+  up_left_corner.point.y = temp[1];
+  down_right_corner.point.x = temp[2];
+  down_right_corner.point.y = temp[3];
+
+  res.faces_up_left.push_back(up_left_corner);
+  res.faces_down_right.push_back(down_right_corner);
 
   return true;
 }

@@ -18,7 +18,7 @@ limitations under the License.
 
 ******************************************************************************/
 
-#include <face_detection/face_detector.h>
+#include <rapp_face_detection/face_detector.h>
 
 /**
  * @brief Default constructor
